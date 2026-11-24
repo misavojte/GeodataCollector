@@ -10,6 +10,7 @@ authors:
     given-names: "Karel"
     orcid: "https://orcid.org/0000-0002-5899-2626"
     affiliation: "Palacký University Olomouc"
+url: "https://vojtechovska.com/research/software/geodata-collector/"
 repository-code: "https://github.com/misavojte/GeodataCollector"
 license: MIT
 keywords:
@@ -20,3 +21,6 @@ keywords:
   - digital humanities
   - OpenLayers
   - PHP
+  - research software
+  - cultural heritage
+  - georeferencing

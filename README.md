@@ -6,7 +6,8 @@
 
 <p align="center">
   Self-hosted web app for collecting points, lines and areas on a map,<br>
-  described with your own attribute schema.
+  described with your own attribute schema.<br>
+  <a href="https://vojtechovska.com/research/software/geodata-collector/"><b>Project page</b></a>
 </p>
 
 <p align="center">
