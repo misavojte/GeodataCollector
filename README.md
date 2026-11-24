@@ -35,7 +35,7 @@ in **MySQL/MariaDB** and exports **GeoJSON** for QGIS, R or Python.
 - [Configuration](#configuration)
 - [Your data](#your-data)
 - [Project structure](#project-structure)
-- [Contributing](#contributing) · [Citation](#citation) · [License](#license)
+- [Contributing](#contributing) · [Authors](#authors) · [Citation](#citation) · [License](#license)
 
 ## Features
 
@@ -173,6 +173,11 @@ Data model, request flow and security: **[docs/ARCHITECTURE.md](docs/ARCHITECTUR
 Issues and pull requests are welcome, see [CONTRIBUTING.md](CONTRIBUTING.md).
 Translations especially: add a dictionary next to `frontend/src/lib/i18n.en.ts`
 (the `Dict` type lists every key) and register it in `i18n.ts` and `login.php`.
+
+## Authors
+
+- **Karel Macků** ([ORCID](https://orcid.org/0000-0002-5899-2626)), Palacký University Olomouc: concept and initiation
+- **Michaela Vojtechovska**: design and development
 
 ## Citation
 

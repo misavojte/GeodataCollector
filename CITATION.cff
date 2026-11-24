@@ -6,6 +6,10 @@ type: software
 authors:
   - family-names: "Vojtechovska"
     given-names: "Michaela"
+  - family-names: "Macků"
+    given-names: "Karel"
+    orcid: "https://orcid.org/0000-0002-5899-2626"
+    affiliation: "Palacký University Olomouc"
 repository-code: "https://github.com/misavojte/GeodataCollector"
 license: MIT
 keywords:
