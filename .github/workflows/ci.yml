@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:11.4
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: geodata
+          MARIADB_USER: geodata
+          MARIADB_PASSWORD: geodata
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: pdo_mysql, mbstring, curl, gd
+
+      - name: PHP syntax check
+        run: find . -name '*.php' -not -path './frontend/*' -print0 | xargs -0 -n1 php -l
+
+      - name: Install database (schema + seed + demo data)
+        run: |
+          cp config/config.example.php config/config.php
+          sed -i "s/'host'    => 'localhost'/'host'    => '127.0.0.1'/; s/'geodata_collector'/'geodata'/; s/'db_user'/'geodata'/; s/'CHANGE_ME'/'geodata'/" config/config.php
+          php tools/install.php --demo --admin=ci.admin --password=ci-password-123
+          php tools/install.php --demo   # must be safe to run twice
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Frontend type check
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run check
+
+      - name: Build deploy package
+        run: node tools/build-deploy.mjs

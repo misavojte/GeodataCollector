@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="cs">
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%sveltekit.assets%/logo.svg" />
+    <link rel="stylesheet" href="%sveltekit.assets%/fonts/poppins.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Startup guard: if the app fails to start (a stale cached index.html pointing
+         to files that no longer exist), it retries ONCE, loading the page with a unique URL. -->
+    <script src="%sveltekit.assets%/boot-guard.js" defer></script>
+    %sveltekit.head%
+</head>
+<body>
+    <div style="display: contents">%sveltekit.body%</div>
+</body>
+</html>

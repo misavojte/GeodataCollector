@@ -1,0 +1,29 @@
+-- =============================================================================
+--  Migration: drop the spatial index on features.geom
+--  RUN THIS BEFORE uploading the application version that shipped with this file
+--  (phpMyAdmin → SQL). Takes a fraction of a second.
+-- -----------------------------------------------------------------------------
+--  WHY: shared hosting gives sessions a server default of READ UNCOMMITTED, and its
+--  proxy can swap the backend connection even IN THE MIDDLE of a request, so pinning
+--  SET SESSION ... REPEATABLE READ cannot be reliably maintained (verified in
+--  production repeatedly, even with query retries and a fresh connection). Yet both
+--  reading and maintaining a SPATIAL (R-tree) index require predicate locks, which
+--  InnoDB refuses under READ UNCOMMITTED → sporadic SQLSTATE 25000 / 1207 errors
+--  in /api/features.
+--
+--  Only without a spatial index is the query independent of the isolation level:
+--  MBRIntersects is evaluated row by row, without predicate locks, under ANY
+--  isolation level. At realistic data volumes (hundreds to thousands of records)
+--  this takes a few ms. Precedent within the app itself: feature_revisions has
+--  stored geometries without a spatial index from the start and has never thrown
+--  error 1207.
+--
+--  If the data volume ever grows by orders of magnitude (tens of thousands of
+--  records or more), the right solution is bbox columns (min/max lon/lat) with a
+--  plain BTREE index maintained by the application – NOT a return to the R-tree.
+--
+--  (IF EXISTS is MariaDB syntax – fine on MariaDB. On plain MySQL, run it
+--  without IF EXISTS if needed.)
+-- =============================================================================
+
+ALTER TABLE features DROP INDEX IF EXISTS spx_features_geom;

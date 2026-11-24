@@ -1,0 +1,52 @@
+/* Standalone styles for the server-side PHP pages (login.php, tools/create_admin.php).
+   Independent of the SvelteKit build. */
+:root {
+    --accent: #d93925;
+    --accent-600: #b3271a;
+    --accent-050: #fbeae8;
+    --ink: #21262b;
+    --muted: #646b72;
+    --surface: #ffffff;
+    --border-strong: #c2c8ce;
+    --ring: rgba(217,57,37,.32);
+    --shadow: 0 10px 30px rgba(18,26,33,.16);
+    --r-sm: 6px;
+    --font-ui: "Poppins", -apple-system, "Segoe UI", Roboto, Arial, system-ui, sans-serif;
+    --font-disp: "Poppins", -apple-system, "Segoe UI", Roboto, Arial, system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; font-family: var(--font-ui); color: var(--ink); }
+a { color: var(--accent-600); }
+
+.login-page {
+    display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 1rem;
+    background: radial-gradient(120% 120% at 50% 0%, #2a2f37 0%, #20242a 60%, #181b20 100%);
+}
+.login-card {
+    background: var(--surface); border-radius: 14px; box-shadow: var(--shadow);
+    padding: 2.4rem 2.2rem; width: 100%; max-width: 392px; text-align: center;
+}
+.login-logo { display: block; width: 50px; height: 55px; margin: 0 auto 1rem; }
+.login-title { font-family: var(--font-disp); font-size: 1.55rem; margin: 0; }
+.login-subtitle { color: var(--muted); margin: .35rem 0 0; font-size: .92rem; }
+
+.login-form { display: flex; flex-direction: column; gap: .3rem; margin-top: 1.6rem; text-align: left; }
+.login-form label { font-weight: 600; font-size: .85rem; margin-top: .55rem; }
+.login-form input, .login-form select {
+    width: 100%; padding: .6rem .7rem; font: inherit;
+    border: 1px solid var(--border-strong); border-radius: var(--r-sm);
+}
+.login-form input:focus, .login-form select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--ring); }
+
+.btn { appearance: none; border: 1px solid transparent; border-radius: var(--r-sm); padding: .6rem 1rem; font: inherit; font-weight: 600; cursor: pointer; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent-600); }
+.btn-block { width: 100%; }
+.login-form .btn { margin-top: 1.3rem; }
+
+.alert { border-radius: var(--r-sm); padding: .6rem .8rem; margin-bottom: .8rem; font-size: .9rem; text-align: left; }
+.alert-error { background: var(--accent-050); color: var(--accent-600); border: 1px solid #f2c9c3; }
+.login-note { color: var(--muted); font-size: .8rem; margin-top: 1.3rem; }
+.login-lang { margin-top: .8rem; font-size: .8rem; }
+.login-lang a { color: var(--muted); text-decoration: underline; }
+.login-lang a:hover { color: var(--accent); }

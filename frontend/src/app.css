@@ -1,0 +1,146 @@
+/* ============================================================================
+   Geodata Collector | design tokens and consistent form controls
+   Brand red (#d93925) as the accent, charcoal-dark header, cool neutrals.
+   ========================================================================== */
+
+:root {
+    --header:        #20242a;
+    --header-line:   rgba(255,255,255,.12);
+
+    --accent:        #d93925;
+    --accent-600:    #b3271a;
+    --accent-050:    #fbeae8;
+
+    --ink:           #21262b;
+    --muted:         #646b72;
+    --bg:            #e9ebee;
+    --surface:       #ffffff;
+    --surface-2:     #f5f6f8;
+    --border:        #d9dde1;
+    --border-strong: #c2c8ce;
+    --hover:         #eceef1;   /* shared hover grey for secondary elements (buttons, tiles) */
+
+    --ok:            #2e7d4f;
+    --danger:        #c0291b;
+
+    --gcp-map:       #e06c1b;   /* warm orange for historical-map points (circle) */
+    --gcp-ref:       #0284c7;   /* cobalt blue for reference/present-day points (square) */
+
+    --ring:          rgba(217,57,37,.32);
+    --shadow-sm:     0 1px 2px rgba(20,28,36,.06), 0 1px 3px rgba(20,28,36,.08);
+    --shadow:        0 10px 30px rgba(18,26,33,.16);
+
+    /* Poppins (self-hosted, see static/fonts/poppins.css) as the single typeface everywhere;
+       the system sans is only a fallback while loading / on failure. */
+    --font-ui:   "Poppins", -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, system-ui, sans-serif;
+    --font-disp: "Poppins", -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, system-ui, sans-serif;
+
+    --r: 8px;
+    --r-sm: 6px;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html, body {
+    margin: 0; height: 100%;
+    font-family: var(--font-ui);
+    font-size: 15px; line-height: 1.45;
+    color: var(--ink); background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 { margin: 0; font-weight: 600; }
+
+/* --- consistent form controls (shared across the app) --- */
+
+.ui-input, .ui-textarea, .ui-select {
+    width: 100%; font: inherit; color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--border-strong); border-radius: var(--r-sm);
+    padding: .5rem .6rem; transition: border-color .12s, box-shadow .12s;
+}
+.ui-textarea { resize: vertical; min-height: 4.5em; }
+.ui-input:focus, .ui-textarea:focus, .ui-select:focus {
+    outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--ring);
+}
+.ui-input:disabled, .ui-textarea:disabled, .ui-select:disabled {
+    background: var(--surface-2); color: #4b5258; cursor: default;
+}
+
+.ui-select {
+    appearance: none; -webkit-appearance: none; cursor: pointer;
+    padding-right: 2.1rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23646b72' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right .7rem center;
+}
+.ui-select:hover { border-color: var(--muted); }
+.ui-select option:disabled { color: #b0b6bc; }
+
+.ui-range { width: 100%; accent-color: var(--accent); }
+
+.ui-check { display: flex; align-items: center; gap: .5rem; cursor: pointer; font-size: .9rem; }
+.ui-check input { accent-color: var(--accent); width: 16px; height: 16px; }
+
+/* uppercase group label */
+.field-label { font-size: .82rem; font-weight: 600; color: var(--ink); }
+
+.alert { border-radius: var(--r-sm); padding: .55rem .7rem; font-size: .85rem; }
+.alert-error { background: var(--accent-050); color: var(--accent-600); border: 1px solid #f2c9c3; }
+
+.muted { color: var(--muted); }
+
+/* --- flat "inspector": a panel without bubbles, sections separated by a full-width rule ---
+   Each section carries its own padding (not .scroll) so the rule runs edge to edge. */
+.insp { padding: 1.1rem 1rem; border-top: 1px solid var(--border); }
+.insp:first-child { border-top: 0; }
+.insp.detail { padding-top: 1.25rem; } /* the selected record is always on top – more air above the title */
+.insp-eyebrow {
+    margin: 0 0 .6rem;
+    font-size: .72rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .09em;
+    color: var(--muted);
+}
+
+/* Shape-editing hint – distinct from field help texts, but calm (not a "warning").
+   Sticky to the top edge of the card, so it stays visible while the form scrolls. */
+.edit-hint {
+    position: sticky; top: 0; z-index: 1;
+    display: flex; gap: .55rem; align-items: flex-start;
+    margin: 0; padding: .6rem .75rem;
+    font-size: .82rem; line-height: 1.4; color: var(--ink);
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-left: 3px solid var(--accent); border-radius: var(--r-sm);
+}
+.edit-hint.hint-orange { border-left-color: var(--gcp-map); }
+.edit-hint.hint-blue { border-left-color: var(--gcp-ref); }
+.edit-hint svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--accent); margin-top: 1px; }
+.edit-hint.hint-orange svg { color: var(--gcp-map); }
+.edit-hint.hint-blue svg { color: var(--gcp-ref); }
+.edit-hint p { margin: 0; }
+.edit-hint .del { margin-top: .3rem; font-weight: 600; }
+.read-only-note { margin: 0; font-size: .8rem; color: var(--muted); font-style: italic; }
+
+/* ============================================================================
+   OpenLayers controls aligned with the brand (the map is the app's largest surface).
+   ol.css is imported BEFORE app.css (see +layout.svelte), so these rules win.
+   ========================================================================== */
+.ol-control { background: transparent; padding: 0; }
+.ol-control button {
+    background: var(--header); color: #fff;
+    width: 1.85rem; height: 1.85rem;
+    font-size: 1.05rem; font-weight: 600; line-height: 1;
+    border-radius: var(--r-sm);
+    transition: background .12s;
+}
+.ol-control button:hover,
+.ol-control button:focus { background: var(--accent); color: #fff; }
+.ol-control button:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
+
+.ol-zoom { top: .7rem; left: .7rem; display: flex; flex-direction: column; gap: .28rem; }
+.ol-zoom .ol-zoom-in, .ol-zoom .ol-zoom-out { border-radius: var(--r-sm); }
+
+/* The scale bar (ScaleLine) keeps the default OpenLayers look – a custom background made it worse. */
+
+/* The attribution / info icon is fully hidden on the map (internal data-collection tool). */
+.ol-attribution { display: none !important; }
+

@@ -1,0 +1,41 @@
+name: Release
+
+# Push a tag like v1.0.0 to publish a GitHub release with ready-to-upload packages.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build packages (domain root and /geodata subdirectory)
+        run: |
+          node tools/build-deploy.mjs
+          (cd deploy && zip -qr ../geodata-collector-${GITHUB_REF_NAME}-root.zip .)
+          rm -rf deploy   # no leftover chunks from the root build
+          node tools/build-deploy.mjs geodata
+          (cd deploy && zip -qr ../geodata-collector-${GITHUB_REF_NAME}-subdir-geodata.zip .)
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" geodata-collector-*.zip \
+            --title "Geodata Collector $GITHUB_REF_NAME" --generate-notes \
+            --notes "Upload the contents of a zip to your PHP hosting and follow DEPLOY.md. Use the *-root* package for a domain root, *-subdir-geodata* for https://your-domain/geodata/ (for any other subdirectory build it yourself: node tools/build-deploy.mjs <name>)."

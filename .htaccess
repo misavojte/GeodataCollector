@@ -1,0 +1,91 @@
+# =============================================================================
+#  Root .htaccess (Apache)
+# =============================================================================
+
+# Disable directory listing
+Options -Indexes
+
+# Default document (SvelteKit SPA build)
+DirectoryIndex index.html index.php
+
+# Encoding
+AddDefaultCharset utf-8
+
+# -----------------------------------------------------------------------------
+#  Custom error pages. __BASE__ is filled in by tools/build-deploy.mjs based on the
+#  (sub)directory ("" for the root → /404.html, "/geodata" → /geodata/404.html). The pages are
+#  self-contained (inline styles), so they work at any depth and do not depend on assets.
+#  The API (/api/*) returns its own JSON body, so ErrorDocument does not affect it.
+# -----------------------------------------------------------------------------
+ErrorDocument 404 __BASE__/404.html
+ErrorDocument 403 __BASE__/404.html
+ErrorDocument 500 __BASE__/500.html
+
+# -----------------------------------------------------------------------------
+#  Compression of static text assets (JS/CSS/SVG/HTML). JSON from the API is compressed
+#  by PHP (app/Response.php) – which is why it is DELIBERATELY left out here, to avoid
+#  double compression.
+# -----------------------------------------------------------------------------
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml \
+        application/javascript application/x-javascript image/svg+xml
+</IfModule>
+
+# -----------------------------------------------------------------------------
+#  Security headers (static). CSP with nonce is set by index.php in PHP.
+# -----------------------------------------------------------------------------
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set X-XSS-Protection "0"
+    # Disable sensitive browser permissions
+    Header set Permissions-Policy "geolocation=(self), camera=(), microphone=()"
+</IfModule>
+
+# -----------------------------------------------------------------------------
+#  Cache: split into immutable (content-hashed) and always-fresh (entry HTML).
+#  IMPORTANT for deploying new versions: every SvelteKit build has NEW chunk names
+#  in _app/immutable. If index.html were cached hard, a returning browser would
+#  load an OLD index.html pointing to chunks that no longer exist → 404 → blank page.
+#  Therefore index.html and version.json are ALWAYS revalidated (no-cache), so after
+#  a deployment the browser always gets fresh HTML with the correct (new) chunk names.
+# -----------------------------------------------------------------------------
+<IfModule mod_headers.c>
+    # Entry HTML + version manifest: may be stored, but is ALWAYS revalidated with the
+    # server (a cheap 304 until it changes; fresh right after a deploy). This is the cleanup safeguard.
+    <FilesMatch "(^|/)(index|404|500)\.html$|(^|/)version\.json$">
+        Header set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
+</IfModule>
+# Immutable hashed chunks (_app/immutable) are cached forever – this is controlled by a
+# separate .htaccess INSIDE the _app/immutable folder (written by tools/build-deploy.mjs),
+# so that non-hashed assets (assets/login.css, fonts/, logo.svg) are NOT frozen as well.
+
+# -----------------------------------------------------------------------------
+#  API routing:  /api/<anything>  ->  api.php?__route=<anything>
+# -----------------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Do not rewrite existing files/folders (assets etc.)
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # API
+    RewriteRule ^api/(.*)$ api.php?__route=$1 [QSA,L]
+</IfModule>
+
+# -----------------------------------------------------------------------------
+#  Deny access to hidden and sensitive files
+# -----------------------------------------------------------------------------
+<FilesMatch "(^\.|\.(sql|md|ini|log|example\.php)$)">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>

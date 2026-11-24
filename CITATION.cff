@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software in your research, please cite it as below."
+title: "Geodata Collector"
+abstract: "A self-hosted web application for research teams to collect points, lines and polygons with a configurable attribute schema, full version history and GeoJSON export. Runs on shared PHP/MySQL hosting."
+type: software
+authors:
+  - family-names: "Vojtechovska"
+    given-names: "Michaela"
+repository-code: "https://github.com/misavojte/GeodataCollector"
+license: MIT
+keywords:
+  - GIS
+  - data collection
+  - field survey
+  - historical landscape
+  - digital humanities
+  - OpenLayers
+  - PHP
